@@ -1,0 +1,27 @@
+package ${thisPackage};
+
+import java.util.List;
+import java.util.Map;
+import ${doFullClassName};
+
+/**
+* this file is auto generate.
+*/
+public interface ${className} {
+
+	void create(${domainName} ${paramName});
+
+	int delete(${idType} id);
+
+    int deleteByIds(List<${idTypeWrapper}> ids);
+
+    int update(${domainName} ${paramName});
+
+	${domainName} queryById(${idType} id);
+
+    Map<${idTypeWrapper}, ${domainName}> queryByIds(List<${idTypeWrapper}> ids);
+	
+	long getCount${domainName}(${domainName} param);
+    
+    List<${domainName}> queryForPage${domainName}s(${domainName} param);
+}

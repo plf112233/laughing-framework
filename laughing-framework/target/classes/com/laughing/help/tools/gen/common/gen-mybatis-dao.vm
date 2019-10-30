@@ -1,0 +1,33 @@
+package ${thisPackage};
+
+import java.util.List;
+import java.util.Map;
+import org.springframework.stereotype.Repository;
+import ${doFullClassName};
+
+/**
+* this file is auto generate.
+*/
+@Repository
+public interface ${className} {
+
+	void insert(${domainName} ${paramName});
+
+    void insertAndGetId(${domainName} ${paramName});
+
+    void insertBatch(List<${domainName}> ${paramName}List);
+
+	int delete(${idType} id);
+
+    int deleteByIds(List<${idTypeWrapper}> ids);
+
+    int update(${domainName} ${paramName});
+
+	${domainName} queryById(${idType} id);
+
+    Map<${idTypeWrapper}, ${domainName}> queryByIds(List<${idTypeWrapper}> ids);
+	
+	long getCount${domainName}(${domainName} param);
+    
+    List<${domainName}> queryForPage${domainName}s(${domainName} param);
+}

@@ -1,0 +1,98 @@
+${headInfo}
+<div class="rightDiv">
+	<!-- 搜索框显示区域 -->
+	<div class="searchDiv">
+		<label for="${alias}Id" >编号ID：</label>
+		<input type="text" class="form-control" id="${alias}Id" placeholder="请输入编号ID" onblur="isInteger(this, '编号ID');" />
+		
+		<button type="button" id="searchBtn" class="btn btn-primary searchBtn">
+			<span class="glyphicon glyphicon-search arrow"></span> 搜索
+		</button>
+		<button type="button" id="clearBtn" class="btn btn-primary searchBtn" onClick="clearSearchCondition(this);">
+			<span class="glyphicon glyphicon-trash arrow"></span> 清空
+		</button>
+	</div>
+	<!-- 数据常用操作按钮显示区域 -->
+	<div class="btn-group operatorBtnGroup" role="group" aria-label="...">
+  		<button type="button" id="addBtn" class="btn btn-default"><span class="glyphicon glyphicon-plus arrow"></span> 新增</button>
+	</div>
+	<!-- 表格显示区域 -->
+	<div class="tableDiv" >
+		<table id="${alias}Table" >
+			<!-- 定义表格的列宽 -->
+			<colgroup>
+					 #foreach($mappingColumn in $mappingColumns)
+						<col style="">
+					 #end
+			</colgroup>
+		</table>
+  	</div>
+</div>
+
+
+<script type="text/javascript">
+	$(function () {
+		// 初始化表格
+        initTable();
+        
+        // 新增
+        $('#addBtn').click(function(){
+        	var url = '$createPageAction';
+        	defaultDialog('${alias}Table', 'add${domainName}Form', url, '新增', '');
+        });
+        
+        // 搜索
+        $('#searchBtn').click(function(){
+			$('#${alias}Table').bootstrapTable('refresh');
+		});
+	});
+	
+	function initTable(){
+		var fields = [ 
+		#foreach($mappingColumn in $mappingColumns)
+		{title: '${mappingColumn.viewAliasName}', field: '${mappingColumn.property}', sortable: true },
+		 #end
+		{title: '操作', field: 'id', align: 'center', valign: 'middle', sortable: false, formatter: function(value, row, index){return columnsFormatter(value, row, index);} } ];
+	    var columns = initColumns(true, fields);
+	    var url = '$tablePageAction';
+	    initBootstrapTable('${alias}Table', {'url': url, 'queryParams': 'get${domainName}SearchParams', 'columns': columns});
+	}    
+	
+	// 字段名与列名的映射，用于传递排序时的字段名称
+	var fieldMapping = {
+	#foreach($mappingColumn in $mappingColumns)
+	 #if(${velocityCount}<${mappingColumns.size()})
+		'${mappingColumn.property}': '${mappingColumn.column}',
+	 #end
+	 #if(${velocityCount}==${mappingColumns.size()})
+		'${mappingColumn.property}': '${mappingColumn.column}'
+	 #end
+	#end
+	};
+	// 获取表格查询的参数
+	function get${domainName}SearchParams(params) {
+		var searchParams = {                     // 这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+			pageSize: params.limit,                 // 每页记录数
+			startRow: params.offset,               // 当前页索引
+			sortName: fieldMapping[params.sort], // 排序字段名
+            sortOrder: params.order,             // 排序方式
+		};
+		// int类型数据需先判断是否有值
+		if ($('#${alias}Id').val() != '') {
+			searchParams.${alias}Id = $('#${alias}Id').val();
+		}
+		return searchParams;
+	}
+	
+	// 编辑
+	function edit(id) {
+		var url = $editPageAction;
+        defaultDialog('${alias}Table', 'edit${domainName}Form', url, '编辑', '');
+	}
+	
+	// 删除
+	function del(ids){
+		var url = '$deleteDoAction';
+		batchProcess('${alias}Table', 'idList=' + ids, url, deleteTitle, deleteMsg);
+	}
+</script>

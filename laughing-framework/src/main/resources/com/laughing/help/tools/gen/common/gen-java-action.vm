@@ -1,0 +1,132 @@
+package ${thisPackage};
+
+import java.io.IOException;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.laughing.help.biz.common.BoostrapTabelInfo;
+import com.laughing.help.biz.common.ResultInfo;
+import com.laughing.help.biz.utils.MediaGsonUtil;
+import com.laughing.help.tools.gen.common.StatusEnum;
+import ${aoFullName};
+import ${domainFullName};
+/** 
+ * @author 
+ * @date 创建时间：
+ * @describe 
+ */
+@Controller
+public class ${thisClassName} {
+	private static final Logger logger = LoggerFactory.getLogger(${thisClassName}.class);
+	
+	@Resource
+	private ${aoClassName} ${aoBeanName};
+	
+	
+	@RequestMapping(value = "${baseActionTarget}/list.do")
+	public String listView(HttpServletRequest request, ModelMap modelMap) {
+		try {
+			modelMap.put("liId", request.getParameter("liId"));
+		} catch (Exception e) {
+			logger.error("listView Exception:", e);
+		}
+		return "${baseActionTarget}/list";
+	}
+	
+	@RequestMapping(value = "${baseActionTarget}/table.do",produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String queryTable(HttpServletRequest request, HttpServletResponse response, 
+			ModelMap modelMap, ${domainName} ${domainParam}) {
+		try {
+			logger.info("${domainParam} query param:{}", ${domainParam});
+			BoostrapTabelInfo<${domainName}> ${domainParam}TbaleInfo = ${aoBeanName}.get${domainName}PageData(${domainParam});
+			return MediaGsonUtil.toJson(${domainParam}TbaleInfo, BoostrapTabelInfo.class, ${domainName}.class);
+		} catch (Exception e) {
+			logger.error("${aoBeanName} queryTable Exception:", e);
+		}
+		return null;
+	}
+
+	@RequestMapping(value = "${baseActionTarget}/addView.do")
+	public String addView(ModelMap modelMap) {
+		try {
+			//TODO
+		} catch (Exception e) {
+			logger.error("addView Exception:", e);
+			modelMap.put("message", e.getMessage());
+		}
+		return "${baseActionTarget}/create";
+	}
+	
+	@RequestMapping(value = "${baseActionTarget}/add.do",produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public  String add(HttpServletResponse response,${domainName} ${domainParam}){
+		String resultInfo = "";
+		try {
+			logger.info("${domainParam} add param:{}", ${domainParam});
+			String message = ${aoBeanName}.add${domainName}(${domainParam});
+			resultInfo = ResultInfo.getSuccessResultInfo(message, null, null);
+		} catch (Exception e) {
+			logger.error("add Exception:", e);
+			resultInfo = ResultInfo.getFailResultInfo(e.getMessage(), null, null);
+		}
+		logger.info("${domainParam} add resultInfo:{}", resultInfo);
+		return resultInfo;
+	}
+	@RequestMapping(value = "${baseActionTarget}/editView.do")
+	public String editView(ModelMap modelMap, long id) {
+		try {
+			logger.info("${domainParam} editView id:{}", id);
+			${domainName} ${domainParam} = ${aoBeanName}.get${domainName}ById(id);
+			modelMap.put("${domainParam}", ${domainParam});
+			setFieldList(modelMap);
+		} catch (Exception e) {
+			logger.error("${domainParam} editView Exception:", e);
+			modelMap.put("message", e.getMessage());
+		}
+		return "${baseActionTarget}/edit";
+	}
+	
+	@RequestMapping(value = "${baseActionTarget}/edit.do",produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public  String edit(HttpServletResponse response, ${domainName} ${domainParam}){
+		String resultInfo = "";
+		try {
+			logger.info("${domainParam} edit param:{}", ${domainParam});
+			String message = ${aoBeanName}.edit${domainName}(${domainParam});
+			resultInfo = ResultInfo.getSuccessResultInfo(message, null, null);
+		} catch (Exception e) {
+			logger.error("edit Exception:", e);
+			resultInfo = ResultInfo.getFailResultInfo(e.getMessage(), null, null);
+		}
+		logger.info("${domainParam} edit resultInfo:{}", resultInfo);
+		return resultInfo;
+	}
+	@RequestMapping(value = "${baseActionTarget}/del.do",produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public  String del(HttpServletResponse response, String idList) throws IOException {
+		String resultInfo = "";
+		try {
+			logger.info("${domainParam} del idList:{}", idList);
+			String message = ${aoBeanName}.delete${domainName}s(idList);
+			resultInfo = ResultInfo.getSuccessResultInfo(message, null, null);
+		} catch (Exception e) {
+			logger.error("del Exception:", e);
+			resultInfo = ResultInfo.getFailResultInfo(e.getMessage(), null, null);
+		}
+		logger.info("${domainName} del resultInfo:{}", resultInfo);
+		return resultInfo;
+	}
+	private void setFieldList(ModelMap map) throws Exception {
+		map.put("statusList", StatusEnum.getStatusEnumList());
+	}
+}

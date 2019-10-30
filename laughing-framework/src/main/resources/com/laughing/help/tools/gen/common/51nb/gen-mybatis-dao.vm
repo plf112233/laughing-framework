@@ -1,0 +1,95 @@
+package ${thisPackage};
+
+import java.util.List;
+import java.util.Map;
+import org.springframework.stereotype.Repository;
+import ${doFullClassName};
+import ${queryFullClassName};
+/**
+* this file is auto generate by laughing-framework.
+* @author laughing-framework
+*/
+@Repository
+public interface ${className} {
+
+    /**
+    * 单条插入
+    *  @param ${paramName} 插入的数据
+    */
+	void insert(${domainName} ${paramName});
+
+    /**
+    * 单条动态插入
+    *  @param ${paramName} 插入的数据
+    */
+    void insertNotNull(${domainName} ${paramName});
+
+    /**
+    * 单条插入并返回id
+    * @param ${paramName} 插入的数据
+    */
+    void insertAndGetId(${domainName} ${paramName});
+
+    /**
+    * 单条删除
+    * @return 删除的数据条数
+    * @param id 需要删除数据的id
+    */
+	int delete(${idType} id);
+
+    /**
+    * 更新数据
+    * @return 更新的数据条数
+    * @param ${paramName} 更新的数据
+    */
+    int update(${domainName} ${paramName});
+
+    /**
+    * 动态更新数据
+    * @return 更新的数据条数
+    * @param ${paramName} 更新的数据
+    */
+    int updateNotNull(${domainName} ${paramName});
+
+    /**
+    * 根据id查询
+    * @return 查询的数据
+    * @param id 查询数据的id
+    */
+	${domainName} queryById(${idType} id);
+
+    /**
+    * 分页查询
+    * @return 查询的数据
+    * @return ${domainName}s 分页数据
+    */
+    List<${domainName}> listByPage(${querySimpleClassName} query);
+
+    /**
+    * 查询总数量
+    * @return long 条数
+    * @param query
+    */
+    long listByPageCount(${querySimpleClassName} query);
+
+    /**
+    * 批量插入
+    *
+    * @param ${paramName}List 插入的数据
+    */
+    void insertBatch(List<${domainName}> ${paramName}List);
+
+    /**
+    * 批量删除
+    *@return 删除的条数
+    *@param ids 删除数据的ids
+    */
+    int deleteByIds(List<${idTypeWrapper}> ids);
+
+    /**
+    * 批量查询id
+    * @return 查询的数据
+    * @param ids 查询数据的ids
+    */
+    List<${domainName}> queryByIds(List<${idTypeWrapper}> ids);
+}

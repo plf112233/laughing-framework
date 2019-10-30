@@ -1,0 +1,22 @@
+package ${thisPackage};
+
+import com.laughing.help.biz.common.BoostrapTabelInfo;
+import ${domainFullName};
+
+/** 
+ * @author 
+ * @date 创建时间：
+ * @describe 
+ */
+public interface ${thisClassName} {
+
+    BoostrapTabelInfo<${domainName}> get${domainName}PageData(${domainName} param) throws Exception;
+
+    String add${domainName}(${domainName} param) throws Exception;
+	
+	${domainName} get${domainName}ById(long id) throws Exception;
+	
+	String edit${domainName}(${domainName} param) throws Exception;
+	
+	String delete${domainName}s(String idList) throws Exception;
+}

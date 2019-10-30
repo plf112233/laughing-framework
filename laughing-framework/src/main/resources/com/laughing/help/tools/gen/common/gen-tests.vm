@@ -1,0 +1,70 @@
+package ${thisPackage};
+
+import java.util.Arrays;
+import java.util.Map;
+import ${doFullClassName};
+import javax.annotation.Resource;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import junit.framework.Assert;
+
+/**
+* this file is auto generate.
+*/
+@ContextConfiguration(locations = "classpath:spring/spring-mvc-servlet.xml")
+public class ${thisClassName} extends AbstractJUnit4SpringContextTests{
+	@Resource
+	private ${daoClassName} ${daoPropertyname};
+
+    public void testCreate() {
+        ${doName} ${doObject_1} = new ${doName}();
+${propertySetter}
+		${daoPropertyname}.create(${doObject_1});
+		Assert.assertTrue(id > 0);
+	}
+
+    public void testQueryById() {
+        ${doName} ${doObject_1} = new ${doName}();
+${propertySetter}
+        ${daoPropertyname}.create(${doObject_1});
+        Assert.assertTrue(id > 0);
+        ${doName} ${doObject_2} = ${daoPropertyname}.queryById(id);
+        Assert.assertNotNull(${doObject_2});
+        Map<${idTypeWrapper}, ${doName}> ${doObject_3} = ${daoPropertyname}.queryByIds(Arrays.asList(id));
+        Assert.assertNotNull(${doObject_3});
+        Assert.assertTrue(!${doObject_3}.isEmpty());
+    }
+
+    public void testDelete() {
+        ${doName} ${doObject_1} = new ${doName}();
+${propertySetter}
+        ${daoPropertyname}.create(${doObject_1});
+        Assert.assertTrue(id > 0);
+        ${doName} ${doObject_2} = ${daoPropertyname}.queryById(id);
+        Assert.assertNotNull(${doObject_2});
+        ${daoPropertyname}.delete(id);
+        ${doObject_2} = ${daoPropertyname}.queryById(id);
+        Assert.assertNull(${doObject_2});
+    }
+
+    public void testUpdate() {
+        ${doName} ${doObject_1} = new ${doName}();
+${propertySetter}
+        ${daoPropertyname}.create(${doObject_1});
+        Assert.assertTrue(id > 0);
+        ${doName} ${doObject_2} = ${daoPropertyname}.queryById(id);
+        // TODO finish update
+
+
+        ${daoPropertyname}.update(${doObject_2});
+        ${doObject_2} = ${daoPropertyname}.queryById(id);
+        // TODO finish your asserts
+
+    }
+
+
+    public void set${daoClassName}(${daoClassName} ${daoPropertyname}) {
+		this.${daoPropertyname} = ${daoPropertyname};
+	}
+
+}

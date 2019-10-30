@@ -1,0 +1,56 @@
+package ${thisPackage};
+
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import com.laughing.help.biz.common.BoostrapTabelInfo;
+import com.laughing.help.tools.utils.StringUtil;
+import ${daoFullClassName};
+import ${aoFullName};
+import ${domainFullName};
+/** 
+ * @author 
+ * @date 创建时间
+ * @describe 
+ */
+@Service
+public class ${thisClassName} implements ${aoClassName} {
+
+	private static final Logger log = LoggerFactory.getLogger(${thisClassName}.class);
+	@Resource
+	private ${daoClassName} ${daoBeanName};
+	
+	public BoostrapTabelInfo<${domainName}> get${domainName}PageData(${domainName} ${domainParam}) throws Exception {
+		long total = ${daoBeanName}.getCount${domainName}(${domainParam});
+		List<${domainName}> rows = ${daoBeanName}.queryForPage${domainName}s(${domainParam});
+		BoostrapTabelInfo<${domainName}> ${domainParam}PageData = new BoostrapTabelInfo<${domainName}>();
+		${domainParam}PageData.setTotal(total);
+		${domainParam}PageData.setRows(rows);
+		return ${domainParam}PageData;
+	}
+	
+	public String add${domainName}(${domainName} ${domainParam}) throws Exception {
+		${daoBeanName}.insert(${domainParam});
+		return "success";
+	}
+	public ${domainName} get${domainName}ById(long id) throws Exception {
+		return ${daoBeanName}.queryById(id);
+	}
+	
+	public String edit${domainName}(${domainName} ${domainParam}) throws Exception {
+		int editCnt = ${daoBeanName}.update(${domainParam});
+		if (editCnt == 0) {
+			return "failed";
+		}
+		return "success";
+	}
+	
+	public String delete${domainName}s(String idList) throws Exception {
+		List<Long> ids = StringUtil.convertStringToLongList(idList, ",");
+		int deleteCnt = ${daoBeanName}.deleteByIds(ids);
+		return String.format("del success num = %s", deleteCnt);
+	}
+}

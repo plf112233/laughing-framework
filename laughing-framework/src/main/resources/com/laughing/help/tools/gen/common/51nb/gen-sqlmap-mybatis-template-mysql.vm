@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${daoFullClassName}">
+
+    <typeAliases>
+        <typeAlias alias="${simpleName}" type="${domainName}"/>
+    </typeAliases>
+
+    <resultMap id="${mappingName}" type="${domainName}">
+        #foreach($mappingColumn in $mappingColumns)
+            <result column="${mappingColumn.column}" property="${mappingColumn.property}" jdbcType="${mappingColumn.sqlType}"/>
+        #end
+    </resultMap>
+
+    <sql id="${simpleName}-full-columns">
+        ${fullSQLColumns}
+    </sql>
+    <sql id="Common_Where_If">
+        #foreach($dbQueryColumn in $dbQueryColumns)
+            <if test="${dbQueryColumn.property} != null">
+                and ${dbQueryColumn.column} = #{${dbQueryColumn.property},jdbcType=${dbQueryColumn.sqlType}}
+            </if>
+        #end
+    </sql>
+    <insert id="insertAndGetId" parameterType="${domainName}" useGeneratedKeys="true" keyProperty="${idNameProperty}">
+        <![CDATA[
+        ${insertSqlNoId}
+        ]]>
+    </insert>
+
+    <!--动态插入-->
+    <insert id="insertNotNull" parameterType="${domainName}">
+        insert into ${tableName}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            #foreach($mappingColumn in $mappingColumns)
+                <if test="${mappingColumn.property} != null">
+                    ${mappingColumn.column},
+                </if>
+            #end
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #foreach($mappingColumn in $mappingColumns)
+                <if test="${mappingColumn.property} != null">
+                    #{${mappingColumn.property},jdbcType=${mappingColumn.sqlType}},
+                </if>
+            #end
+        </trim>
+    </insert>
+
+    <insert id="insert" parameterType="${domainName}">
+        <![CDATA[
+        ${insertSqlNoId}
+        ]]>
+    </insert>
+
+    <select id="queryById" resultMap="${mappingName}" parameterType="${idType}">
+        select
+        <include refid="${simpleName}-full-columns"/>
+        from ${tableName} where ${idNameColumn} = #{value} #if($logicDeleted) and status = '0' #end
+
+    </select>
+
+    <update id="delete" parameterType="${idType}">
+        #if($logicDeleted)
+            update ${tableName} set status = '0' #if("$!{gmtModifiedName}" != "") , ${gmtModifiedName} = now() #end
+            where ${idNameColumn} = #value#
+        #else
+            delete from ${tableName} where ${idNameColumn} = #{value}
+        #end
+    </update>
+
+    <update id="update" parameterType="${domainName}">
+        <![CDATA[
+        ${genUpdateNoId}
+        ]]>
+    </update>
+
+    <!--动态更新-->
+    <update id="updateNotNull" parameterType="${domainName}">
+        update ${tableName}
+        <set>
+            #foreach($mappingColumn in $mappingColumns)
+                <if test="${mappingColumn.property} != null">
+                    ${mappingColumn.column} = #{${mappingColumn.property},jdbcType=${mappingColumn.sqlType}},
+                </if>
+            #end
+        </set>
+        where  ${idNameColumn}= #{${idName},jdbcType=BIGINT}
+    </update>
+
+    <select id="listByPage"
+            parameterType="${queryFullClassName}"
+            resultMap="${mappingName}">
+        select
+        <include refid="${simpleName}-full-columns"/>
+        from ${tableName}
+        <where>
+            <include refid="Common_Where_If"/>
+        </where>
+        <if test="sortList!= null and sortList!= ''">
+            order by ${sortList}
+        </if>
+        limit ${currentPage},${pageSize}
+    </select>
+
+    <select id="listByPageCount"
+            parameterType="${queryFullClassName}"
+            resultType="long">
+        select
+        count(*)
+        from ${tableName}
+        <where>
+            <include refid="Common_Where_If"/>
+        </where>
+    </select>
+
+    <!--批量操作sql-->
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="false">
+        ${insertBatchNoId}
+    </insert>
+
+    <select id="queryByIds" resultMap="${mappingName}">
+        select
+        <include refid="${simpleName}-full-columns"/>
+        from ${tableName} where ${idNameColumn} in
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        #if($logicDeleted) and status = '1' #end
+    </select>
+
+    <update id="deleteByIds">
+        #if($logicDeleted)
+            update ${tableName} set status = '0' #if("$!{gmtModifiedName}" != "") , ${gmtModifiedName} = now() #end
+            where ${idNameColumn} in
+            <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        #else
+            delete from ${tableName} where ${idNameColumn} in
+            <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        #end
+    </update>
+</mapper>

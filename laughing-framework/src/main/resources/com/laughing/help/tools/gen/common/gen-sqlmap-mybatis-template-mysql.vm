@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${daoFullClassName}">
+
+    <typeAliases>
+        <typeAlias alias="${simpleName}" type="${domainName}"/>
+    </typeAliases>
+
+    <resultMap id="${mappingName}" type="${domainName}">
+        #foreach($mappingColumn in $mappingColumns)
+            <result column="${mappingColumn.column}" property="${mappingColumn.property}" jdbcType="${mappingColumn.sqlType}"/>
+        #end
+    </resultMap>
+
+    <sql id="${simpleName}-full-columns">
+        ${fullSQLColumns}
+    </sql>
+    <sql id="Common_Where_If">
+        #foreach($dbQueryColumn in $dbQueryColumns)
+            <if test="${mappingColumn.property} != null">
+                and ${dbQueryColumn.column} = #{${mappingColumn.property},jdbcType=${mappingColumn.sqlType}}
+            </if>
+        #end
+    </sql>
+    <insert id="insertAndGetId" parameterType="${domainName}" useGeneratedKeys="true" keyProperty="${idNameProperty}">
+        <![CDATA[
+        ${insertSqlNoId}
+        ]]>
+    </insert>
+    <insert id="insert" parameterType="${domainName}">
+        <![CDATA[
+        ${insertSqlNoId}
+        ]]>
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="false">
+        <![CDATA[
+        ${insertBatchNoId}
+        ]]>
+    </insert>
+
+    <select id="queryById" resultMap="${mappingName}" parameterType="${idType}">
+        select
+        <include refid="${simpleName}-full-columns"/>
+        from ${tableName} where ${idNameColumn} = #{value} #if($logicDeleted) and status = '0' #end
+
+    </select>
+
+    <update id="delete" parameterType="${idType}">
+        #if($logicDeleted)
+            update ${tableName} set status = '0' #if("$!{gmtModifiedName}" != "") , ${gmtModifiedName} = now() #end
+            where ${idNameColumn} = #value#
+        #else
+            delete from ${tableName} where ${idNameColumn} = #{value}
+        #end
+    </update>
+
+    <update id="deleteByIds">
+        #if($logicDeleted)
+            update ${tableName} set status = '0' #if("$!{gmtModifiedName}" != "") , ${gmtModifiedName} = now() #end
+            where ${idNameColumn} in
+            <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        #else
+            delete from ${tableName} where ${idNameColumn} in
+            <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        #end
+    </update>
+
+    <update id="update" parameterType="${domainName}">
+        <![CDATA[
+        ${genUpdateNoId}
+        ]]>
+    </update>
+
+    <select id="getCount${simpleName}" resultClass="long">
+        select count(0) from ${tableName}
+        <where>
+            <include refid="Common_Where_If"/>
+        </where>
+
+    </select>
+
+    <select id="queryForPage${simpleName}s" resultMap="${mappingName}">
+        select
+        <include refid="${simpleName}-full-columns"/>
+        from ${tableName} #if($logicDeleted) where status = '1' #end
+        <where>
+            <include refid="Common_Where_If"/>
+        </where>
+        <isNotEqual property="startRow" compareValue="0">
+            limit ${startRow} offset ${pageSize}
+        </isNotEqual>
+        order by update_time desc
+    </select>
+
+    <select id="queryByIds" resultMap="${mappingName}">
+        select
+        <include refid="${simpleName}-full-columns"/>
+        from ${tableName} where ${idNameColumn} in
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        #if($logicDeleted) and status = '1' #end
+    </select>
+
+</mapper>

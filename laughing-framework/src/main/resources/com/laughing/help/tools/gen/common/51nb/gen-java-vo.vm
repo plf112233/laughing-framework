@@ -1,0 +1,19 @@
+package ${thisPackage};
+
+import io.swagger.annotations.ApiModelProperty;
+import com.laughing.lang.utils.page.AbstractObject;
+import java.util.Date;
+import java.io.Serializable;
+/**
+* @author laughing-framework
+* @date 创建时间：
+* @describe 数据展示层
+*/
+public class ${thisClassName} extends AbstractObject implements Serializable {
+    #foreach($mappingColumn in $mappingColumns)
+    @ApiModelProperty("${mappingColumn.viewAliasName}")
+    private ${mappingColumn.entityType} ${mappingColumn.property};
+
+    #end
+
+}

@@ -1,0 +1,114 @@
+package ${thisPackage};
+
+import java.util.List;
+import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import javax.annotation.Resource;
+import org.springframework.stereotype.Repository;
+import com.ibatis.sqlmap.client.SqlMapClient;
+import ${daoFullClassName};
+import ${doFullClassName};
+import com.laughing.lang.utils.CollectionUtil;
+import com.laughing.lang.utils.MapUtil;
+/**
+* this file is auto generate.
+*/
+@Repository
+public class ${className}  implements ${daoClassName} {
+private static final Logger logger = LoggerFactory.getLogger(${className}.class);
+	@Resource(name="${sqlMapClientName}")
+	private SqlMapClient ${sqlMapClientName};
+    @Override
+	public void create(${domainName} ${paramName}) {
+		try {
+			this.${sqlMapClientName}.insert("${namespace}.create", ${paramName});
+		} catch (Exception e) {
+			logger.error("create(${domainName} e:",e);
+		}
+		
+	}
+
+    @Override
+	public int delete(${idType} id) {
+		try {
+			return this.${sqlMapClientName}.update("${namespace}.delete", id);
+		} catch (Exception e) {
+			logger.error("delete e:",e);
+		}
+		return 0;
+	}
+
+    @Override
+    public int deleteByIds(List<${idTypeWrapper}> ids) {
+        try {
+        	if (CollectionUtil.isEmpty(ids)) {
+            	return 0;
+       		 }
+			return this.${sqlMapClientName}.update("${namespace}.deleteByIds", ids);
+		} catch (Exception e) {
+			logger.error("deleteByIds e:",e);
+		}
+		return 0;
+    }
+
+    @Override
+	public int update(${domainName} ${paramName}) {
+		try {
+        	return this.${sqlMapClientName}.update("${namespace}.update", ${paramName});
+		} catch (Exception e) {
+			logger.error("update e:",e);
+		}
+		return 0;
+	}
+
+    @Override
+	public ${domainName} queryById(${idType} id) {
+		try {
+        	return (${domainName})this.${sqlMapClientName}.queryForObject("${namespace}.queryById", id);
+		} catch (Exception e) {
+			logger.error("queryById e:",e);
+		}
+		return null;
+	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<${idTypeWrapper}, ${domainName}> queryByIds(List<${idTypeWrapper}> ids) {
+        try {
+        	if (CollectionUtil.isEmpty(ids)) {
+           	 	return MapUtil.newHashMap();
+        	}
+       		 List<${domainName}> resultList = (List<${domainName}>) this.${sqlMapClientName}.queryForList("${namespace}.queryByIds", ids);
+       		 Map<${idTypeWrapper}, ${domainName}> ret = MapUtil.newHashMap();
+        	for (${domainName} ${paramName} : resultList) {
+            	ret.put(${paramName}.getId(), ${paramName});
+        	}
+       		 return ret;
+		} catch (Exception e) {
+			logger.error("queryByIds e:",e);
+		}
+		return null;
+    }
+    
+ 	@Override
+    public long getCount${domainName}(${domainName} param) {
+        try {
+        	 long count = (Long)this.${sqlMapClientName}.queryForObject("${namespace}.getCount${domainName}", param);
+        	return count;
+		} catch (Exception e) {
+			logger.error("getCount${domainName} e:",e);
+		}
+		return 0L;
+    }
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<${domainName}> queryForPage${domainName}s(${domainName} param) {
+    	try {
+        	return (List<${domainName}>)this.${sqlMapClientName}.queryForList("${namespace}.queryForPage${domainName}s", param);
+		} catch (Exception e) {
+			logger.error("queryForPage${domainName}s e:",e);
+		}
+		return null;
+    }
+
+}

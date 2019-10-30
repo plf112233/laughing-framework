@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="${encoding}"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="${namespace}">
+
+	<typeAlias type="${domainName}" alias="${simpleName}" />
+
+	<resultMap id="${mappingName}" class="${simpleName}">
+		#foreach($mappingColumn in $mappingColumns)
+<result property="${mappingColumn.property}" column="${mappingColumn.column}"/>
+		#end
+
+	</resultMap>
+	
+	<sql id="${simpleName}-full-columns">
+		${fullSQLColumns}
+	</sql>
+	
+	<insert id="create" parameterClass="${simpleName}">
+		<![CDATA[
+			${insertSqlNoId}
+		]]>
+	</insert>
+	
+	<select id="queryById" resultMap="${mappingName}" parameterClass="${idType}">
+		select
+			<include refid="${simpleName}-full-columns" />
+		from ${tableName} where ${idNameColumn} = #value# #if($logicDeleted) and status = '1' #end
+
+	</select>
+
+	<update id="delete" parameterClass="${idType}">
+	#if($logicDeleted)
+		update ${tableName} set status = '0' #if("$!{gmtModifiedName}" != "") , ${gmtModifiedName} = now() #end where ${idNameColumn} = #value#
+	#else
+		delete from ${tableName} where ${idNameColumn} = #value#
+    #end
+	</update>
+
+    <update id="deleteByIds" >
+	#if($logicDeleted)
+		update ${tableName} set status = '0' #if("$!{gmtModifiedName}" != "") , ${gmtModifiedName} = now() #end where ${idNameColumn} in
+        <iterate prepend="(" conjunction="," close=")" >
+            #[]#
+        </iterate>
+	#else
+		delete from ${tableName} where ${idNameColumn} in
+        <iterate prepend="(" conjunction="," close=")" >
+            #[]#
+        </iterate>
+    #end
+	</update>
+	
+	<update id="update" parameterClass="${simpleName}">
+		<![CDATA[
+			${genUpdateNoId}
+		]]>
+	</update>
+
+    <select id="getCount${simpleName}" resultClass="long">
+        select count(0) from ${tableName} #if($logicDeleted) where status = '1' #end
+
+    </select>
+
+    <select id="queryForPage${simpleName}s" resultMap="${mappingName}">
+        select
+        <include refid="${simpleName}-full-columns" />
+        from ${tableName} #if($logicDeleted) where status = '1' #end
+        
+       <isNotEqual property="startRow" compareValue="0">
+			limit #startRow# offset #pageSize#
+		</isNotEqual>
+		order by update_time desc
+    </select>
+
+    <select id="queryByIds" resultMap="${mappingName}">
+        select
+        <include refid="${simpleName}-full-columns" />
+        from ${tableName} where ${idNameColumn} in
+        <iterate prepend="(" conjunction="," close=")" >
+            #[]#
+        </iterate>
+        #if($logicDeleted) and status = '1' #end
+
+    </select>
+
+</sqlMap>

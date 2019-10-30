@@ -1,0 +1,70 @@
+package ${thisPackage};
+
+import com.laughing.help.biz.common.PageResponse;
+import ${domainFullName};
+import ${voFullClassName};
+import ${queryFullClassName};
+
+import java.util.List;
+/** 
+ * @author laughing-framework
+ * @date 创建时间：
+ * @describe this file is auto generate by laughing-framework.
+ */
+public interface ${thisClassName} {
+
+    /**
+    * 单条插入
+    *  @param ${voSimpleParam} 插入的数据
+    */
+    void insert(${voSimpleClassName} ${voSimpleParam}) throws Exception;
+
+    /**
+    * 单条删除
+    * @return 删除的数据条数
+    * @param id 需要删除数据的id
+    */
+    int delete(${idType} id) throws Exception;
+
+    /**
+    * 动态更新数据
+    * @return 更新的数据条数
+    * @param ${voSimpleParam} 更新的数据
+    */
+    void update(${voSimpleClassName} ${voSimpleParam}) throws Exception;
+
+    /**
+    * 根据id查询
+    * @return 查询的数据
+    * @param id 查询数据的id
+    */
+    ${voSimpleClassName} queryById(${idType} id) ;
+
+    /**
+    * 分页查询
+    * @return 查询的分页数据
+    * @param query 动态查询数据的参数
+    */
+    PageResponse<${voSimpleClassName}> listByPage(${querySimpleClassName} query) ;
+
+    /**
+    * 批量插入
+    *
+    * @param ${voSimpleParam}List 插入的数据
+    */
+    void insertBatch(List<${voSimpleClassName}> ${voSimpleParam}List) throws Exception;
+
+    /**
+    * 批量删除
+    *@return 删除的条数
+    *@param ids 删除数据的ids
+    */
+    int deleteByIds(List<${idTypeWrapper}> ids) throws Exception;
+
+    /**
+    * 批量查询id
+    * @return 查询的数据
+    * @param ids 查询数据的ids
+    */
+    List<${voSimpleClassName}> queryByIds(List<${idTypeWrapper}> ids) throws Exception;
+}

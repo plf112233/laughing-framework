@@ -1,0 +1,159 @@
+package ${thisPackage};
+
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.laughing.help.biz.common.PageResponse;
+import com.laughing.lang.utils.page.CloneDirection;
+import com.laughing.lang.utils.page.ObjectUtils;
+import ${daoFullClassName};
+import ${aoFullName};
+import ${domainFullName};
+import ${voFullClassName};
+import ${queryFullClassName};
+
+/**
+* @author laughing-framework
+* @date 创建时间：
+* @describe this file is auto generate by laughing-framework.
+*/
+@Service
+public class ${thisClassName} implements ${aoClassName} {
+
+	private static final Logger log = LoggerFactory.getLogger(${thisClassName}.class);
+
+	@Autowired
+	private ${daoClassName} ${daoBeanName};
+
+	/**
+	* 单条插入--默认调用动态插入
+	*  @param ${voSimpleParam} 插入的数据
+	*/
+	@Override
+	public void insert(${voSimpleClassName} ${voSimpleParam}) throws Exception {
+		try {
+			${daoBeanName}.insertNotNull(${voSimpleParam}.clone(${domainName}.class));
+		} catch (Exception e) {
+			log.error("insert is error:", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	* 单条删除
+	* @return 删除的数据条数
+	* @param id 需要删除数据的id
+	*/
+	@Override
+	public int delete(${idType} id) throws Exception {
+		try {
+			return ${daoBeanName}.delete(id);
+		} catch (Exception e) {
+			log.error("delete is error:", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	* 更新数据--默认调用动态更新
+	* @return 更新的数据条数
+	* @param ${voSimpleParam} 更新的数据
+	*/
+	@Override
+	public void update(${voSimpleClassName} ${voSimpleParam}) throws Exception {
+		try {
+			${daoBeanName}.updateNotNull(${voSimpleParam}.clone(${domainName}.class));
+		} catch (Exception e) {
+			log.error("update is error:", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	* 根据id查询
+	* @return 查询的数据
+	* @param id 查询数据的id
+	*/
+	@Override
+	public ${voSimpleClassName} queryById(${idType} id) {
+		try {
+			${domainName} ${domainParam} = ${daoBeanName}.queryById(id);
+			return ${domainParam}.clone(${voSimpleClassName}.class);
+		} catch (Exception e) {
+			log.error("update is error:", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	* 分页查询
+	* @return 查询的分页数据
+	* @param query 动态查询数据的参数
+	*/
+	@Override
+	public PageResponse<${voSimpleClassName}> listByPage(${querySimpleClassName} query) {
+		PageResponse<${voSimpleClassName}> pageResponse = new PageResponse<>();
+    	try {
+    		long count = ${daoBeanName}.listByPageCount(query);
+    		List<${domainName}> ${domainParam}List = ${daoBeanName}.listByPage(query);
+        	List<${voSimpleClassName}> ${voSimpleParam}List = ObjectUtils.convertList(${domainParam}List, ${voSimpleClassName}.class, CloneDirection.OPPOSITE);
+            pageResponse.setPageIndex(query.getPageIndex());
+            pageResponse.setPageSize(query.getPageSize());
+            pageResponse.setTotalRecords(count);
+            pageResponse.setRecords(${voSimpleParam}List);
+        } catch (Exception e) {
+			log.error("listByPage is error:", e);
+        }
+        return pageResponse;
+	}
+
+	/**
+	* 批量插入
+	*
+	* @param ${voSimpleParam}List 插入的数据
+	*/
+	@Override
+	public void insertBatch(List<${voSimpleClassName}> ${voSimpleParam}List) throws Exception{
+		try {
+			List<${domainName}> ${domainParam}List = ObjectUtils.convertList(${voSimpleParam}List, ${domainName}.class, CloneDirection.OPPOSITE);
+			${daoBeanName}.insertBatch(${domainParam}List);
+		} catch (Exception e) {
+			log.error("insertBatch is error:", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	* 批量删除
+	*@return 删除的条数
+	*@param ids 删除数据的ids
+	*/
+	@Override
+	public int deleteByIds(List<${idTypeWrapper}> ids) throws Exception{
+		try {
+			return ${daoBeanName}.deleteByIds(ids);
+		} catch (Exception e) {
+			log.error("deleteByIds is error:", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	* 批量查询id
+	* @return 查询的数据
+	* @param ids 查询数据的ids
+	*/
+	@Override
+	public List<${voSimpleClassName}> queryByIds(List<${idTypeWrapper}> ids) throws Exception{
+		try{
+			List<${domainName}> ${domainParam}List = ${daoBeanName}.queryByIds(ids);
+			List<${voSimpleClassName}> ${voSimpleParam}List = ObjectUtils.convertList(${domainParam}List, ${voSimpleClassName}.class, CloneDirection.OPPOSITE);
+			return ${voSimpleParam}List;
+		}catch(Exception e){
+			log.error("queryByIds is error:", e);
+			throw new RuntimeException(e);
+		}
+	}
+}

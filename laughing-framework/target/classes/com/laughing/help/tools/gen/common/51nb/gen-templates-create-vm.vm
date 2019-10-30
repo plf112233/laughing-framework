@@ -1,0 +1,81 @@
+<div>
+	<form id="add${domainName}Form">
+		#foreach($mappingColumn in $mappingColumns)
+        <div class="form-group">
+            <label>${mappingColumn.editAliasName}</label>
+			<input type="text" class="form-control" name="${mappingColumn.property}" placeholder="${mappingColumn.editAliasName}不能为空" />
+        </div>
+		#end
+		<div class="form-group">
+            <label>是否生效</label>
+            <select class="form-control" name="status" id="status">
+					#foreach($status in $statusList)
+						<option value="${status.key}">${status.value}</option>
+					#end
+			</select>
+        </div>      
+    </form>
+</div>
+<script>
+	$(function () {
+		${messaageInfo}
+        $('#add${domainName}Form').bootstrapValidator({
+　　　　　　	message: 'This value is not valid',
+            　	   	feedbackIcons: {
+                　　　　		valid: 'glyphicon glyphicon-ok',
+                　　　　		invalid: 'glyphicon glyphicon-remove',
+                　　　　		validating: 'glyphicon glyphicon-refresh'
+            　　　　　	},
+            fields: {
+			#foreach($mappingColumn in $mappingColumns)		
+				#if(${velocityCount}<${mappingColumns.size()})
+${mappingColumn.editAliasName}: {
+                    message: '${mappingColumn.editAliasName}校验失败',
+                    validators: {
+                    	notEmpty: {
+                            message: '${mappingColumn.editAliasName}不能为空'
+                        }, stringLength: {
+                        	min: 1,
+                        	max: 100,
+                        	message: '请输出100位以内的${mappingColumn.editAliasName}'	
+                        }
+                    }
+                  },
+				#end
+				#if(${velocityCount}==${mappingColumns.size()})
+${mappingColumn.editAliasName}: {
+                    message: '${mappingColumn.editAliasName}校验失败',
+                    validators: {
+                    	notEmpty: {
+                            message: '${mappingColumn.editAliasName}不能为空'
+                        }, stringLength: {
+                        	min: 1,
+                        	max: 100,
+                        	message: '请输出100位以内的${mappingColumn.editAliasName}'	
+                        }
+                    }
+                  }
+			    #end
+			#end		
+
+            }
+        });
+        
+    });
+    
+    function ajaxSubmitForm() {
+		#foreach($mappingColumn in $mappingColumns)
+    	var ${mappingColumn.property} = $('input[name="${mappingColumn.property}"]').val();
+    	#end
+    	var status = $('#status option:selected').val();
+    	var param = {
+			#foreach($mappingColumn in $mappingColumns)		
+					'${mappingColumn.property}':${mappingColumn.property},
+			#end
+			'status':status		
+		};
+    	var url = '$addAction';
+    	var resultInfo = ajaxPost(url, param, false);
+    	return resultInfo;
+    }
+</script>

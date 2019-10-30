@@ -1,0 +1,19 @@
+package ${thisPackage};
+
+import io.swagger.annotations.ApiModelProperty;
+import com.laughing.help.biz.common.PageRequest;
+import java.util.Date;
+import java.io.Serializable;
+/**
+* @author
+* @date 创建时间：
+* @describe 查询参数
+*/
+public class ${thisClassName} extends PageRequest implements Serializable{
+#foreach($mappingColumn in $mappingColumns)
+    @ApiModelProperty("${mappingColumn.dbQueryAliasName}")
+    private ${mappingColumn.entityType} ${mappingColumn.property};
+
+#end
+
+}
