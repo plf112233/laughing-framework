@@ -54,7 +54,6 @@ public class ${thisClassName} {
 	}
 
 	@ApiOperation(value = "删除")
-	@DeleteMapping("/{${idNameProperty}}")
 	@RequestMapping(value = "/delete/{${idNameProperty}}", method = RequestMethod.GET)
 	public Result delete(@NotNull @PathVariable("${idNameProperty}") ${idTypeUpper} ${idNameProperty}) {
 		Result result = new Result();
@@ -85,7 +84,6 @@ public class ${thisClassName} {
 	}
 
 	@ApiOperation(value = "根据id搜索数据")
-	@DeleteMapping("/{${idNameProperty}}")
 	@RequestMapping(value = "/queryById/{${idNameProperty}}", method = RequestMethod.GET)
 	public ${voSimpleClassName} queryById(@NotNull @PathVariable("${idNameProperty}") ${idTypeUpper} ${idNameProperty}) {
 		logger.info("start queryById ${idNameProperty}= {}", ${idNameProperty});

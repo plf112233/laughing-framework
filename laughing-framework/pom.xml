@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
     <groupId>com.laughing</groupId>
     <artifactId>laughing-framework</artifactId>
-	<version>1.057</version>
+	<version>1.060</version>
 	<packaging>jar</packaging>
 	<dependencies>
 		 <dependency>

@@ -18,7 +18,7 @@ public class ${thisClassName} extends AbstractJUnit4SpringContextTests{
 
     public void testCreate() {
         ${doName} ${doObject_1} = new ${doName}();
-${propertySetter}
+            ${propertySetter}
 		${daoPropertyname}.create(${doObject_1});
 		Assert.assertTrue(id > 0);
 	}
