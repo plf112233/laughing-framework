@@ -1,1 +1,1 @@
-测试
+laughing-framework 一个可以笑着编程的框架
